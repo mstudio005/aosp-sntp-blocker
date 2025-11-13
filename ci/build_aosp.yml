@@ -1,0 +1,28 @@
+name: Build AOSP with SNTP BLOCKER (emulator)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+      - name: Fetch AOSP manifest & repo (placeholder)
+        run: echo "This step will repo init and repo sync on a runner with enough disk space."
+      - name: Apply patches (placeholder)
+        run: echo "Apply patches script should be run here."
+      - name: Build (placeholder)
+        run: echo "Build commands will run here (make -j...)."
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aosp-emulator-image
+          path: out/target/product/generic_x86_64/*.img

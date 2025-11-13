@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="SNTP BLOCKER">
+        <SwitchPreferenceCompat
+            android:key="sntp_blocker_enabled"
+            android:title="Enable SNTP BLOCKER" />
+        <Preference
+            android:key="sntp_blocked_apps"
+            android:title="Blocked Apps" />
+        <Preference
+            android:key="sntp_dns_lock"
+            android:title="DNS Lock (disable Private DNS)" />
+    </PreferenceCategory>
+</PreferenceScreen>

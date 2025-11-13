@@ -1,0 +1,5 @@
+From: Your Name <you@example.com>
+Date: 2025-11-13
+Subject: [PATCH] system/sepolicy: add sntpblocker SELinux module (skeleton)
+
+Add basic SELinux rules to allow system_server to bind the new service and SystemUI to show overlay.

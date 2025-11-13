@@ -1,0 +1,6 @@
+From: Your Name <you@example.com>
+Date: 2025-11-13
+Subject: [PATCH] packages/apps/Settings: add SNTP BLOCKER settings screen skeleton
+
+This patch adds the Settings fragments and menu entries.
+*** Add new files under packages/apps/Settings/src/com/android/settings/sntpblocker/
