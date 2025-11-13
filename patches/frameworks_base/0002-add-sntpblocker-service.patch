@@ -1,0 +1,85 @@
+From: SNTP BLOCKER TEAM <developer@sntpblocker.dev>
+Subject: [PATCH] Add SntpBlockerService skeleton to frameworks/base
+Date: Thu, 13 Nov 2025 10:00:00 +0000
+
+---
+ frameworks/base/services/core/java/com/android/server/sntpblocker/SntpBlockerService.java | 67 ++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 frameworks/base/services/core/java/com/android/server/sntpblocker/SntpBlockerService.java
+
+diff --git a/frameworks/base/services/core/java/com/android/server/sntpblocker/SntpBlockerService.java b/frameworks/base/services/core/java/com/android/server/sntpblocker/SntpBlockerService.java
+new file mode 100644
+index 000000000..111111111
+--- /dev/null
++++ b/frameworks/base/services/core/java/com/android/server/sntpblocker/SntpBlockerService.java
+@@ -0,0 +1,67 @@
++package com.android.server.sntpblocker;
++
++import android.content.Context;
++import android.os.IBinder;
++import android.util.Slog;
++
++import com.android.server.SystemService;
++
++import java.util.ArrayList;
++import java.util.List;
++
++/**
++ * SntpBlockerService (skeleton v1)
++ *
++ * This is the core service file for the SNTP BLOCKER feature.
++ * For Version 1, this file contains:
++ * - Basic structure
++ * - Binder interface stub
++ * - Blocked apps list
++ * - DNS lock flag
++ *
++ * More functionality will be added in later patches.
++ */
++public final class SntpBlockerService extends SystemService {
++
++    private static final String TAG = "SntpBlockerService";
++
++    private final Context mContext;
++    private final List<String> mBlockedPackages = new ArrayList<>();
++    private boolean mDnsLockEnabled = false;
++
++    public SntpBlockerService(Context context) {
++        super(context);
++        mContext = context;
++    }
++
++    @Override
++    public void onStart() {
++        Slog.i(TAG, "Starting SNTP BLOCKER service");
++        publishBinderService("sntp_blocker", new BinderService());
++    }
++
++    private final class BinderService extends ISntpBlockerService.Stub {
++
++        @Override
++        public void setBlockedApps(List<String> packages) {
++            synchronized (mBlockedPackages) {
++                mBlockedPackages.clear();
++                if (packages != null) mBlockedPackages.addAll(packages);
++            }
++        }
++
++        @Override
++        public List<String> getBlockedApps() {
++            synchronized (mBlockedPackages) {
++                return new ArrayList<>(mBlockedPackages);
++            }
++        }
++
++        @Override
++        public void enableDnsLock(boolean enable) {
++            mDnsLockEnabled = enable;
++        }
++
++        @Override
++        public boolean isDnsLockEnabled() {
++            return mDnsLockEnabled;
++        }
++    }
++}
