@@ -1,15 +1,63 @@
-name: Build AOSP with SNTP BLOCKER
+name: Build AOSP with SNTP BLOCKER (android-14)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
+    env:
+      AOSP_MANIFEST: https://android.googlesource.com/platform/manifest
+      AOSP_BRANCH: android-14.0.0_r1  # change to exact tag if you want
     steps:
-      - name: Check out repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Placeholder build step
-        run: echo "AOSP build will be added when a self-hosted runner is available."
+      - name: Install prerequisites
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y repo git-core gnupg flex bison build-essential zip curl \
+            zlib1g-dev libncurses5 libncurses5-dev libssl-dev libxml2-utils xsltproc \
+            python3 python3-pip ccache lzop lz4 rsync
+
+      - name: Configure ccache
+        run: |
+          ccache -M 120G
+          echo "USE_CCACHE=1" >> $GITHUB_ENV
+
+      - name: Repo init (android-14)
+        run: |
+          mkdir -p $HOME/aosp
+          cd $HOME/aosp
+          repo init -u $AOSP_MANIFEST -b $AOSP_BRANCH
+
+      - name: Repo sync (may take a long time)
+        run: |
+          cd $HOME/aosp
+          repo sync -j$(nproc) --no-clone-bundle
+
+      - name: Apply patches
+        run: |
+          cd $HOME/aosp
+          $GITHUB_WORKSPACE/ci/apply_patches.sh "$HOME/aosp"
+
+      - name: Build minimal targets
+        run: |
+          cd $HOME/aosp
+          source build/envsetup.sh
+          lunch aosp_x86_64-eng
+          # Try to build only changed modules to reduce resource usage
+          m FrameworksBase Settings SystemUI -j$(nproc) || make -j$(nproc)
+
+      - name: Package artifacts
+        run: |
+          cd $HOME/aosp/out/target/product/generic_x86_64 || true
+          tar -czf $GITHUB_WORKSPACE/aosp-sntp-emulator-images.tar.gz *.img || true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aosp-emulator-images
+          path: $GITHUB_WORKSPACE/aosp-sntp-emulator-images.tar.gz
