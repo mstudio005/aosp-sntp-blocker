@@ -1,0 +1,73 @@
+From: SNTP BLOCKER TEAM <developer@sntpblocker.dev>
+Subject: [PATCH] Settings: Add SNTP BLOCKER entry + fragment stub
+Date: Thu, 13 Nov 2025 10:00:00 +0000
+
+---
+ packages/apps/Settings/res/xml/sntp_blocker_settings.xml                                      | 18 ++++++++++++++++++
+ packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java  | 23 +++++++++++++++++++++++
+ packages/apps/Settings/AndroidManifest.xml                                                     |  5 +++++
+ 3 files changed, 46 insertions(+)
+ create mode 100644 packages/apps/Settings/res/xml/sntp_blocker_settings.xml
+ create mode 100644 packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java
+
+diff --git a/packages/apps/Settings/res/xml/sntp_blocker_settings.xml b/packages/apps/Settings/res/xml/sntp_blocker_settings.xml
+new file mode 100644
+index 000000000..333333333
+--- /dev/null
++++ b/packages/apps/Settings/res/xml/sntp_blocker_settings.xml
+@@ -0,0 +1,18 @@
++<?xml version="1.0" encoding="utf-8"?>
++<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
++
++    <PreferenceCategory android:title="SNTP BLOCKER">
++
++        <SwitchPreference
++            android:key="sntp_blocker_enabled"
++            android:title="Enable SNTP BLOCKER"
++            android:defaultValue="false" />
++
++        <Preference
++            android:key="sntp_blocked_apps"
++            android:title="Blocked Apps" />
++
++    </PreferenceCategory>
++
++</PreferenceScreen>
+
+diff --git a/packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java b/packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java
+new file mode 100644
+index 000000000..444444444
+--- /dev/null
++++ b/packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java
+@@ -0,0 +1,23 @@
++package com.android.settings.sntpblocker;
++
++import android.os.Bundle;
++
++import androidx.preference.PreferenceFragmentCompat;
++
++import com.android.settings.R;
++
++/** SNTP BLOCKER settings fragment (v1 skeleton) */
++public class SntpBlockerSettingsFragment extends PreferenceFragmentCompat {
++
++    @Override
++    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
++        setPreferencesFromResource(R.xml.sntp_blocker_settings, rootKey);
++    }
++}
+
+diff --git a/packages/apps/Settings/AndroidManifest.xml b/packages/apps/Settings/AndroidManifest.xml
+index 123456789..555555555 100644
+--- a/packages/apps/Settings/AndroidManifest.xml
++++ b/packages/apps/Settings/AndroidManifest.xml
+@@ -1000,6 +1000,11 @@
+ 
+         <!-- SNTP BLOCKER -->
++        <activity android:name="com.android.settings.sntpblocker.SntpBlockerSettingsFragment"
++            android:exported="false"
++            android:label="SNTP BLOCKER">
++        </activity>
++
+     </application>
+ </manifest>
