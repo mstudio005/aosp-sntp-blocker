@@ -1,0 +1,72 @@
+From: SNTP BLOCKER TEAM <developer@sntpblocker.dev>
+Subject: [PATCH] Settings: Wire SNTP BLOCKER toggle to system service (v1)
+Date: Thu, 13 Nov 2025 11:00:00 +0000
+
+---
+ packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java | 86 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ packages/apps/Settings/res/xml/sntp_blocker_settings.xml                                               |  0
+ 1 file changed, 86 insertions(+)
+ create mode 100644 packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java
+
+diff --git a/packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java b/packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java
+new file mode 100644
+index 000000000..ddddddddd
+--- /dev/null
++++ b/packages/apps/Settings/src/com/android/settings/sntpblocker/SntpBlockerSettingsFragment.java
+@@ -0,0 +1,86 @@
++package com.android.settings.sntpblocker;
++
++import android.os.Bundle;
++import android.os.RemoteException;
++import android.os.ServiceManager;
++import android.util.Log;
++import androidx.preference.Preference;
++import androidx.preference.PreferenceFragmentCompat;
++import androidx.preference.SwitchPreferenceCompat;
++
++import com.android.settings.R;
++
++import com.android.server.sntpblocker.ISntpBlockerService;
++
++/** SNTP Blocker Settings — v1 implementation (calls AIDL service) */
++public class SntpBlockerSettingsFragment extends PreferenceFragmentCompat {
++    private static final String TAG = "SntpSettings";
++    private static final String KEY_ENABLED = "sntp_blocker_enabled";
++
++    private ISntpBlockerService mService;
++    private SwitchPreferenceCompat mToggle;
++
++    @Override
++    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
++        setPreferencesFromResource(R.xml.sntp_blocker_settings, rootKey);
++
++        mToggle = findPreference(KEY_ENABLED);
++        if (mToggle != null) {
++            mToggle.setOnPreferenceChangeListener((preference, newValue) -> {
++                boolean enable = Boolean.TRUE.equals(newValue);
++                ensureService();
++                try {
++                    if (mService != null) {
++                        mService.enableDnsLock(enable);
++                    }
++                } catch (RemoteException e) {
++                    Log.w(TAG, "Remote exception when toggling DNS lock: " + e);
++                }
++                // For v1 we only toggle DNS lock flag; UI disabling is enforced elsewhere.
++                return true;
++            });
++        }
++    }
++
++    private void ensureService() {
++        if (mService != null) return;
++        try {
++            android.os.IBinder b = ServiceManager.getService("sntp_blocker");
++            if (b != null) {
++                mService = ISntpBlockerService.Stub.asInterface(b);
++            }
++        } catch (Throwable t) {
++            Log.w(TAG, "Failed to get SNTP Blocker service: " + t);
++        }
++    }
++}
