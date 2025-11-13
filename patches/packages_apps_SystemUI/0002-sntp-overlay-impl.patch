@@ -1,0 +1,96 @@
+From: SNTP BLOCKER TEAM <developer@sntpblocker.dev>
+Subject: [PATCH] SystemUI: add overlay and helper entrypoint (v1)
+Date: Thu, 13 Nov 2025 11:00:00 +0000
+
+---
+ packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java | 74 ++++++++++++++++++++++++++++++++++++++++++++++
+ packages/apps/SystemUI/res/layout/sntp_block_overlay.xml                          | 13 +++++++++++
+ 2 files changed, 87 insertions(+)
+ create mode 100644 packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java
+ create mode 100644 packages/apps/SystemUI/res/layout/sntp_block_overlay.xml
+
+diff --git a/packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java b/packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java
+new file mode 100644
+index 000000000..eeeeeeeee
+--- /dev/null
++++ b/packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java
+@@ -0,0 +1,74 @@
++package com.android.systemui.sntpblocker;
++
++import android.content.Context;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.WindowManager;
++import android.view.WindowManager.LayoutParams;
++import android.widget.TextView;
++
++import com.android.systemui.R;
++import com.android.internal.annotations.VisibleForTesting;
++
++/** Lightweight overlay helper for SNTP BLOCKER (v1) */
++public class SntpBlockOverlay {
++    private final Context mContext;
++    private final WindowManager mWm;
++    private View mView;
++
++    public SntpBlockOverlay(Context context) {
++        mContext = context;
++        mWm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
++    }
++
++    public void show(String message) {
++        if (mView != null) return;
++        LayoutInflater inflater = LayoutInflater.from(mContext);
++        mView = inflater.inflate(R.layout.sntp_block_overlay, null);
++        if (mView == null) return;
++
++        LayoutParams lp = new LayoutParams(
++                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
++        lp.type = LayoutParams.TYPE_APPLICATION_OVERLAY;
++        lp.flags = LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_NOT_TOUCH_MODAL;
++        lp.alpha = 1.0f;
++
++        TextView tv = mView.findViewById(android.R.id.text1);
++        if (tv != null) tv.setText(message);
++
++        try {
++            mWm.addView(mView, lp);
++        } catch (Exception e) {
++            // fail silently in v1
++        }
++    }
++
++    public void hide() {
++        if (mView == null) return;
++        try {
++            mWm.removeView(mView);
++        } catch (Exception e) {
++            // ignore
++        } finally {
++            mView = null;
++        }
++    }
++}
++
+diff --git a/packages/apps/SystemUI/res/layout/sntp_block_overlay.xml b/packages/apps/SystemUI/res/layout/sntp_block_overlay.xml
+new file mode 100644
+index 000000000..ffffffffff
+--- /dev/null
++++ b/packages/apps/SystemUI/res/layout/sntp_block_overlay.xml
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="#AA000000"
++    android:foregroundGravity="center">
++
++    <TextView
++        android:id="@android:id/text1"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="This app is blocked by SNTP BLOCKER"
++        android:textColor="#FFFFFFFF"
++        android:textSize="18sp"/>
++
++</FrameLayout>
