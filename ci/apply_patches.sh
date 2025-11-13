@@ -1,6 +1,8 @@
-#!/bin/bash
-set -e
-echo "Apply patches script - adjust AOSP paths before running"
-# Example:
-# cd $AOSP/frameworks/base
-# git am /path/to/aosp-sntp-blocker/patches/frameworks_base/*.patch
+#!/usr/bin/env bash
+set -euo pipefail
+
+# This script will be used later when building AOSP.
+# For now it does nothing dangerous, only prints info.
+
+echo "apply_patches.sh is ready."
+echo "Actual patch application will be added later."
