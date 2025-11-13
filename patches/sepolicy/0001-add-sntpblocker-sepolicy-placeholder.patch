@@ -1,0 +1,22 @@
+From: SNTP BLOCKER TEAM <developer@sntpblocker.dev>
+Subject: [PATCH] sepolicy: Add placeholder policy file for SNTP BLOCKER
+Date: Thu, 13 Nov 2025 10:00:00 +0000
+
+---
+ system/sepolicy/private/sntpblocker.te | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 system/sepolicy/private/sntpblocker.te
+
+diff --git a/system/sepolicy/private/sntpblocker.te b/system/sepolicy/private/sntpblocker.te
+new file mode 100644
+index 000000000..888888888
+--- /dev/null
++++ b/system/sepolicy/private/sntpblocker.te
+@@ -0,0 +1,7 @@
++## Placeholder SELinux policy for SNTP BLOCKER feature (v1)
++##
++## This file currently does NOT change any permissions.
++## It exists so that future policy entries have a clean location.
++
++type sntpblocker_service, domain;
++typeattribute sntpblocker_service coredomain;
