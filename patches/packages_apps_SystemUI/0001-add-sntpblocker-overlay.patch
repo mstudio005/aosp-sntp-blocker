@@ -1,0 +1,72 @@
+From: SNTP BLOCKER TEAM <developer@sntpblocker.dev>
+Subject: [PATCH] SystemUI: Add SntpBlocker overlay skeleton (v1)
+Date: Thu, 13 Nov 2025 10:00:00 +0000
+
+---
+ packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java | 38 +++++++++++++++++++++++++++++++
+ packages/apps/SystemUI/res/layout/sntp_block_overlay.xml                         | 13 +++++++++++
+ 2 files changed, 51 insertions(+)
+ create mode 100644 packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java
+ create mode 100644 packages/apps/SystemUI/res/layout/sntp_block_overlay.xml
+
+diff --git a/packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java b/packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java
+new file mode 100644
+index 000000000..666666666
+--- /dev/null
++++ b/packages/apps/SystemUI/src/com/android/systemui/sntpblocker/SntpBlockOverlay.java
+@@ -0,0 +1,38 @@
++package com.android.systemui.sntpblocker;
++
++import android.content.Context;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.WindowManager;
++
++import com.android.systemui.R;
++
++/**
++ * Very simple overlay skeleton for SNTP BLOCKER (v1).
++ * This is NOT fully hooked into Activity blocking yet.
++ */
++public class SntpBlockOverlay {
++
++    private final Context mContext;
++    private final WindowManager mWindowManager;
++    private View mOverlayView;
++
++    public SntpBlockOverlay(Context context) {
++        mContext = context;
++        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
++    }
++
++    public void show() {
++        if (mOverlayView != null) return;
++        mOverlayView = LayoutInflater.from(mContext)
++            .inflate(R.layout.sntp_block_overlay, null);
++        // v1: We don't attach to WindowManager yet (safe)
++    }
++
++    public void hide() {
++        mOverlayView = null;
++    }
++}
+
+diff --git a/packages/apps/SystemUI/res/layout/sntp_block_overlay.xml b/packages/apps/SystemUI/res/layout/sntp_block_overlay.xml
+new file mode 100644
+index 000000000..777777777
+--- /dev/null
++++ b/packages/apps/SystemUI/res/layout/sntp_block_overlay.xml
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:orientation="vertical"
++    android:gravity="center"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="#AA000000">
++
++    <TextView
++        android:text="This app is blocked by SNTP BLOCKER"
++        android:textColor="#ffffff"
++        android:textSize="20sp"/>
++</LinearLayout>
