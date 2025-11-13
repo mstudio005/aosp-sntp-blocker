@@ -1,0 +1,15 @@
+name: Build AOSP with SNTP BLOCKER
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Placeholder build step
+        run: echo "AOSP build will be added when a self-hosted runner is available."
